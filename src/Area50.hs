@@ -6,12 +6,18 @@ import Data.Int
 import System.Environment (getArgs)
 import Data.List (intersperse)
 
+import Gnuplot
 
 main :: IO ()
 main = do 
   fs <- getArgs
-  ss <- mapM (\f -> sort `fmap` sizes f) fs
-  putStr $ zipLists fs (map (scanl1 (+)) ss)
+  s1 <- mapM sizes fs
+  let ss = (map ((scanl1 (+)) . sort) s1)
+  mkplot fs $ map (each 10) ss
+  -- putStr $ zipLists fs (map ((scanl1 (+)) . sort) ss)
+
+each n [] = []
+each n (x:xs) = x : each n (drop (n-1) xs)
 
 zipLists :: [String] -> [[Int64]] -> String
 zipLists fs ss = unlines ((concat $ map ('#':'\t':) fs) : go (map (++repeat 0) ([1..]:ss)))
@@ -24,9 +30,9 @@ zipLists fs ss = unlines ((concat $ map ('#':'\t':) fs) : go (map (++repeat 0) (
 myshow 0 = ""
 myshow n = show n
 
+mkplot :: [String] -> [[Int64]] -> IO ()
+mkplot hs ns = gnuplot "" $ zip hs ns
 
-gnuplot :: [String] -> [[Int64]] -> IO ()
-gnuplot = undefined
   -- plot '-' with lines label f -- show ints, end with e
 
 sizes :: FilePath -> IO [Int64]
