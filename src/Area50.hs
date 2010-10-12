@@ -20,7 +20,7 @@ each n [] = []
 each n (x:xs) = x : each n (drop (n-1) xs)
 
 zipLists :: [String] -> [[Int64]] -> String
-zipLists fs ss = unlines ((concat $ map ('#':'\t':) fs) : go (map (++repeat 0) ([1..]:ss)))
+zipLists fs ss = unlines ((concat $ map ("#\t"++) fs) : go (map (++repeat 0) ([1..]:ss)))
   where go :: [[Int64]] -> [String]
         go xs = let hs = map head xs 
                     ts = map tail xs
