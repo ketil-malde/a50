@@ -2,19 +2,19 @@ module Main where
 
 import Bio.Sequence
 import Data.Int
-import System.Environment (getArgs)
 import Data.List (intersperse, foldl')
 
 import qualified Data.IntMap as M
 
 import Gnuplot
+import Options
 
 main :: IO ()
 main = do 
-  fs <- getArgs
-  s1 <- mapM sizes fs
+  opts <- getArgs
+  s1 <- mapM sizes $ inputs opts
   let ss = (map ((scanl1 (+)) . sort) s1)
-  mkplot fs $ map (each 10) ss
+  mkplot opts $ map (each 10) ss
   -- putStr $ zipLists fs (map ((scanl1 (+)) . sort) ss)
 
 each :: Int -> [a] -> [a]
@@ -33,11 +33,14 @@ myshow :: Integral i => i -> String
 myshow 0 = ""
 myshow n = show n
 
-mkplot :: [String] -> [[Int64]] -> IO ()
-mkplot hs ns = gnuplot [labels,tics] $ zip hs ns
+mkplot :: Opt -> [[Int64]] -> IO ()
+mkplot o ns = gnuplot [conf,outp,labels,tics] (zip (inputs o) ns) es
   where labels = "set ylabel 'size'; set xlabel 'contigs'"
         tics  = "set format y '%.0s%c'; set format x '%.0f0'"
-
+        conf = if null $ terminal o then "" else "set terminal "++terminal o
+        outp = if null $ outfile o then "" else "set out '"++outfile o++"'"
+        es   = map read $ expect o
+                  
 sizes :: FilePath -> IO [Int64]
 sizes f = map seqlength `fmap` readFasta f
 

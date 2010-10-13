@@ -22,7 +22,7 @@ Description:    area50 - a simple tool for graphing genome coverage and fragment
                 The Darcs repository is at <http://malde.org/~ketil/biohaskell/area50>.
 
 -- HomePage:	http://blog.malde.org/area50
-Build-Depends:  base>=3 && <5, bio > 0.4, process, containers
+Build-Depends:  base>=3 && <5, bio > 0.4, process, containers, cmdargs
 Build-Type:     Simple
 Cabal-Version:	>= 1.2.3
 Tested-with:    GHC==6.12.1

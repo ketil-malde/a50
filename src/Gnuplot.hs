@@ -5,12 +5,12 @@ import System.Exit
 import System.IO
 import Data.List (intersperse)
 
-gnuplot :: Num i => [String] -> [(String,[i])] -> IO ()
-gnuplot preamble cols = do
+gnuplot :: Num i => [String] -> [(String,[i])] -> [Int] -> IO ()
+gnuplot preamble cols hlines = do
   -- putStrLn $ unlines $ map fst cols
   (i,o,e,p) <- runInteractiveCommand "gnuplot -persist"
   hPutStr i $ unlines $ preamble
-  hPutStrLn i $ mkplots cols
+  hPutStrLn i (mkplots cols ++ concatMap ((',':) . show) hlines)
   mapM_ (\col -> do {hPutStr i . unlines . map show . snd $ col; hPutStrLn i "e"}) cols
   hClose i
   x <- waitForProcess p
