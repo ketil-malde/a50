@@ -4,7 +4,9 @@ module Main where
 import Bio.Sequence
 import Data.Int
 import System.Environment (getArgs)
-import Data.List (intersperse)
+import Data.List (intersperse, foldl')
+
+import qualified Data.IntMap as M
 
 import Gnuplot
 
@@ -41,9 +43,12 @@ sizes :: FilePath -> IO [Int64]
 sizes f = map seqlength `fmap` readFasta f
 
 sort :: [Int64] -> [Int64]
-sort []     = []
-sort [x]    = [x]
-sort (x:xs) = sort gt ++ x:eq ++ sort lt
-  where lt = filter (< x) xs
-        eq = filter (== x) xs
-        gt = filter (> x) xs
+sort = concatMap (\(x,c) -> replicate c (fromIntegral $ negate x)) . M.toAscList . freqs
+
+
+-- equivalent to  'M.fromList . map (\x->(fromIntegral $ negate x,1))', except for not blowing the stack
+freqs :: [Int64] -> M.IntMap Int
+freqs = foldl' ins M.empty . map fromIntegral . map negate
+  where ins m x = case M.lookup x m of 
+          Just v -> v `seq` M.insert x (v+1) m
+          Nothing -> M.insert x 1 m
