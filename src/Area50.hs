@@ -35,7 +35,9 @@ myshow 0 = ""
 myshow n = show n
 
 mkplot :: [String] -> [[Int64]] -> IO ()
-mkplot hs ns = gnuplot "" $ zip hs ns
+mkplot hs ns = gnuplot (labels++ytics) $ zip hs $ map (map ((/(1e6::Double)) . fromIntegral)) ns
+  where labels = "set ylabel 'size'; set xlabel 'contigs';"
+        ytics  = "set format y '%.0fM'"
 
   -- plot '-' with lines label f -- show ints, end with e
 
