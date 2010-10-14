@@ -1,0 +1,23 @@
+a50 is a tool for comparing genome assemblies, providing a bit more
+information than the usual numeric statistics, like N50.
+
+To compare assemblies, you need two or more fasta-formatted files
+containing contigs.  Running 'a50' with the files as arguments
+produces a plot with one curve per input.  On the x-axis are the
+contigs, ordered by size, and on the y-axis is the corresponding
+cumulative size.  Generally, a better assembly has a steeper curve
+(big contigs) which ends early (few contigs) near the y-value
+corresponding to the expected genome size.
+
+The plot is generated using 'gnuplot', so this must be in your $PATH.
+You can pass information to gnuplot on the commandline, specifically
+you can use -t to specify output format ('terminal' in gnuplot lingo),
+-o to specify an output file, and -e to produce horizontal lines,
+e.g. at the expected genome size.
+
+For example:
+
+	a50 -t pdf -o asm.pdf asm1.fasta asm2.fasta -e 8e+8
+
+will plot the assemblies given in asm1.fasta and asm2.fasta against an
+expected genome size of 800Mb in PDF format to the file asm.pdf.

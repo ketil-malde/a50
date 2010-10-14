@@ -27,7 +27,7 @@ Build-Type:     Simple
 Cabal-Version:	>= 1.2.3
 Tested-with:    GHC==6.12.1
 
--- Data-files:     README
+Data-files:     README
 Executable:     a50
 Main-Is:        A50.hs
 Other-Modules:	Gnuplot
