@@ -4,15 +4,20 @@ module Options where
 
 import System.Console.CmdArgs
 import Control.Monad (when)
+import System.Directory (getTemporaryDirectory)
+import Foreign (unsafePerformIO)
 
 version :: String
 version = "area50 v0 - graphical comparison of genome assemblies, ©2010 Ketil Malde."
+
+tmpdefault = unsafePerformIO getTemporaryDirectory
 
 data Opt = Opt { outfile  :: FilePath
                , terminal :: String
                , expect   :: [String]
                , inputs   :: [FilePath]
                , estref   :: FilePath
+               , tmpdir   :: FilePath
                } deriving (Typeable, Data, Show, Eq)
 
 myopt :: Opt
@@ -22,6 +27,7 @@ myopt = Opt
   , expect  = []  &= help "Expected genome size"
   , inputs  = def &= args &= typFile
   , estref  = def &= help "Reference transcripts" &= typFile
+  , tmpdir  = tmpdefault &= help "Set temporary directory" &= typDir
   }
 
 getArgs :: IO Opt
