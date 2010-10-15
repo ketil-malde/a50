@@ -15,18 +15,18 @@ data Opt = Opt { outfile  :: FilePath
                , estref   :: FilePath
                } deriving (Typeable, Data, Show, Eq)
 
-mymode :: Mode Opt
-mymode = mode $ Opt 
-  { outfile = def &= text "Output file, if applicable" & typFile
-  , terminal= def &= text "Gnuplot output format ('terminal')"
-  , expect  = []  &= text "Expected genome size"
-  , inputs  = def &= args & typFile
-  , estref  = def &= text "Reference transcripts" & typFile
+myopt :: Opt
+myopt = Opt 
+  { outfile = def &= help "Output file, if applicable" &= typFile
+  , terminal= def &= help "Gnuplot output format ('terminal')"
+  , expect  = []  &= help "Expected genome size"
+  , inputs  = def &= args &= typFile
+  , estref  = def &= help "Reference transcripts" &= typFile
   }
 
 getArgs :: IO Opt
 getArgs = do
-  o <- cmdArgs version [mymode]
+  o <- cmdArgs myopt
   when (null $ inputs o) $ error "Please specify one or more input files!"
   -- todo: check that output is specified with terminal!
   return o
