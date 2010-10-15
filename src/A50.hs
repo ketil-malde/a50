@@ -12,14 +12,13 @@ import Options
 main :: IO ()
 main = do 
   opts <- getArgs
-  s1 <- mapM sizes $ inputs opts
-  let ss = (map ((scanl1 (+)) . sort) s1)
+  ss <- mapM sizes $ inputs opts
   case estref opts of 
     "" -> do
-      mkplot opts $ map (each 10) ss
+      mkplot opts $ map (each 10) $ map ((scanl1 (+)) . sort) ss
     est -> do  
       ps <- mapM (\asm -> fmap gen_result $ runBlat (tmpdir opts) asm est) (inputs opts)
-      mkplot opts $ map (each 10) $ zipWith interleave ss ps
+      mkplot opts $ map (each 10) $ map (scanl1 (+)) $ zipWith interleave (map sort ss) ps
   -- putStr $ zipLists fs (map ((scanl1 (+)) . sort) ss)
 
 each :: Int -> [a] -> [a]

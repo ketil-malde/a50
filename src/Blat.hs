@@ -28,13 +28,15 @@ runBlat tmpdir asm ests = do
   readPSL pslfile
 
 -- this will only get you the sequences that have a match!
+gen_result :: [PSL] -> [(Int,Int)]
 gen_result = coverage . order . pslbest
 
 interleave :: Integral i => [i] -> [(i,i)] -> [i]
-interleave sz [] = sz
+interleave sz [] = map (const 0) sz
 interleave (sz:szs) covs@((s1,c1):cs) 
   | sz > s1   = 0 : interleave szs covs
   | sz == s1  = c1 : interleave szs cs
+
 -- if this fails, something is wrong with my assumptions!
   | otherwise = error ("interleave failed: "++show sz++" "++show (s1,c1))
 interleave [] rs = error ("interleave failed - leftover contigs: "++show (take 10 rs)++"...")
