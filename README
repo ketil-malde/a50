@@ -17,7 +17,26 @@ e.g. at the expected genome size.
 
 For example:
 
-	a50 -t pdf -o asm.pdf asm1.fasta asm2.fasta -e 8e+8
+        a50 -t pdf -o asm.pdf asm1.fasta asm2.fasta -e 8e+8
 
 will plot the assemblies given in asm1.fasta and asm2.fasta against an
-expected genome size of 800Mb in PDF format to the file asm.pdf.
+expected genome size of 800Mb in PDF format to the file asm.pdf.  If
+no output or terminal is specified, gnuplot will display the graph in
+a window.
+
+A similar way to compare assemblies is to measure the gene coverage of
+each contig.  To do this, you need to have the genes available,
+typically in the form of raw or assembled ESTs.  By specifying a set
+of transcripts using the -E option, e.g:
+
+        a50 asm.fasta asm2.fasta -E ests.fasta
+
+will plot curves with contigs of the assemblies ordered by size along
+the x-axis as before, but the y-value will be the total amount of
+transcript data mapped to the contigs.
+
+The mapping process runs BLAT, and stores the resulting PSL files in a
+tempdir, typically /tmp, but overriden with the $TMPDIR variable or
+specified with -T.  Only the best hit for each EST is retained, so
+exons in other contigs are not counted.
+
