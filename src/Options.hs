@@ -14,7 +14,7 @@ tmpdefault :: FilePath
 tmpdefault = unsafePerformIO getTemporaryDirectory
 
 data Opt = Opt { outfile  :: FilePath
-               , terminal :: String
+               , format :: String
                , expect   :: [String]
                , inputs   :: [FilePath]
                , estref   :: FilePath
@@ -24,7 +24,7 @@ data Opt = Opt { outfile  :: FilePath
 myopt :: Opt
 myopt = Opt 
   { outfile = def &= help "Output file, if applicable" &= typFile
-  , terminal= def &= help "Gnuplot output format ('terminal')"
+  , format  = def &= help "Gnuplot output format (a.k.a. 'terminal')"
   , expect  = []  &= help "Expected genome size"
   , inputs  = def &= args &= typFile
   , estref  = def &= help "Reference transcripts" &= typFile &= name "E"
@@ -35,5 +35,8 @@ getArgs :: IO Opt
 getArgs = do
   o <- cmdArgs myopt
   when (null $ inputs o) $ error "Please specify one or more input files!"
-  -- todo: check that output is specified with terminal!
+  when ((null $ outfile o) && (not $ null $ format o))
+        $ error "You must specify an ouput file when you specify a format"
+  when ((not $ null $ outfile o) && (null $ format o)) 
+        $ error "You must specify a format when you specify an ouput file"
   return o

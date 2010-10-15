@@ -41,7 +41,7 @@ mkplot :: Opt -> [[Int]] -> IO ()
 mkplot o ns = gnuplot [conf,outp,labels,tics] (zip (inputs o) ns) es
   where labels = "set ylabel 'size'; set xlabel 'contigs'"
         tics  = "set format y '%.0s%c'; set format x '%.0f0'"
-        conf = if null $ terminal o then "" else "set terminal "++terminal o
+        conf = if null $ format o then "" else "set terminal "++format o
         outp = if null $ outfile o then "" else "set out '"++outfile o++"'"
         es   = map read $ expect o
                   
