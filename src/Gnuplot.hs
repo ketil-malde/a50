@@ -5,8 +5,13 @@ import System.Exit
 import System.IO
 import Data.List (intersperse)
 
+import Control.Monad (when)
+import System.Directory (findExecutable)
+
 gnuplot :: Num i => [String] -> [(String,[i])] -> [Int] -> IO ()
 gnuplot preamble cols hlines = do
+  fe <- findExecutable "gnuplot"
+  when (fe == Nothing) $ error "Couldn't find the 'gnuplot' executable - aborting"
   -- putStrLn $ unlines $ map fst cols
   (i,o,e,p) <- runInteractiveCommand "gnuplot -persist"
   hPutStr i $ unlines $ preamble

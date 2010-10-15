@@ -6,7 +6,7 @@ module Blat (module Bio.Alignment.PSL, runBlat, gen_result, interleave) where
 import Bio.Alignment.PSL
 import Control.Arrow (second)
 import Data.List (sortBy)
-import System.Directory (doesFileExist)
+import System.Directory (doesFileExist, findExecutable)
 import Control.Monad (when)
 import System.Process (runCommand, waitForProcess) 
 import System.Exit (ExitCode(..))
@@ -21,6 +21,8 @@ runBlat tmpdir asm ests = do
       basename = reverse . takeWhile (/='/') . reverse
   dfe <- doesFileExist pslfile
   when (not dfe) $ do
+    fe <- findExecutable "blat"
+    when (fe == Nothing) $ error "Couldn't find the 'blat' executable - aborting"
     blat <- runCommand $ unwords [blat_cmd,asm,ests,pslfile]
     e <- waitForProcess blat
     case e of ExitSuccess -> return ()
