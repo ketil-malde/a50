@@ -17,7 +17,8 @@ blat_cmd = "blat -t=dna -q=rna -minScore=50 -extendThroughN "
 -- run blat
 runBlat :: FilePath -> FilePath -> FilePath -> IO [PSL]
 runBlat tmpdir asm ests = do
-  let pslfile = tmpdir++"/"++asm++"_vs_"++ests++".psl"
+  let pslfile = tmpdir++"/"++basename asm++"_vs_"++basename ests++".psl"
+      basename = reverse . takeWhile (/='/') . reverse
   dfe <- doesFileExist pslfile
   when (not dfe) $ do
     blat <- runCommand $ unwords [blat_cmd,asm,ests,pslfile]
