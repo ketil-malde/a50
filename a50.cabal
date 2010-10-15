@@ -30,6 +30,6 @@ Tested-with:    GHC==6.12.1
 Data-files:     README
 Executable:     a50
 Main-Is:        A50.hs
-Other-Modules:	Gnuplot
+Other-Modules:	Gnuplot, Options, Blat
 Hs-Source-Dirs: src
 Ghc-Options:    -Wall
