@@ -10,6 +10,7 @@ import Foreign (unsafePerformIO)
 version :: String
 version = "area50 v0 - graphical comparison of genome assemblies, ©2010 Ketil Malde."
 
+tmpdefault :: FilePath
 tmpdefault = unsafePerformIO getTemporaryDirectory
 
 data Opt = Opt { outfile  :: FilePath

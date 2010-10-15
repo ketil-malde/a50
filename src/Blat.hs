@@ -31,10 +31,11 @@ runBlat tmpdir asm ests = do
 gen_result = coverage . order . pslbest
 
 interleave :: Integral i => [i] -> [(i,i)] -> [i]
+interleave sz [] = sz
 interleave (sz:szs) covs@((s1,c1):cs) 
   | sz > s1   = 0 : interleave szs covs
   | sz == s1  = c1 : interleave szs cs
-  | otherwise = error "something went wrong"
+-- if this fails, something is wrong with my assumptions!
 
 coverage :: [PSL] -> [(Int,Int)]
 coverage = map (second (sum . map (sum . blocksizes))) . tgroup

@@ -9,8 +9,6 @@ import Gnuplot
 import Blat
 import Options
 
-tmp = "/tmp" -- fixme: add to options and env
-
 main :: IO ()
 main = do 
   opts <- getArgs
@@ -20,7 +18,7 @@ main = do
     "" -> do
       mkplot opts $ map (each 10) ss
     est -> do  
-      ps <- mapM (\asm -> fmap gen_result $ runBlat tmp asm est) (inputs opts)
+      ps <- mapM (\asm -> fmap gen_result $ runBlat (tmpdir opts) asm est) (inputs opts)
       mkplot opts $ map (each 10) $ zipWith interleave ss ps
   -- putStr $ zipLists fs (map ((scanl1 (+)) . sort) ss)
 
