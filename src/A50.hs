@@ -39,7 +39,7 @@ myshow n = show n
 
 mkplot :: Opt -> [[Int]] -> IO ()
 mkplot o ns = gnuplot [conf,outp,labels,tics] (zip (inputs o) ns) es
-  where labels = "set ylabel 'size'; set xlabel 'contigs'"
+  where labels = "set ylabel 'cumulative size'; set xlabel 'contig number'"
         tics  = "set format y '%.0s%c'; set format x '%.0f0'"
         conf = if null $ format o then "" else "set terminal "++format o
         outp = if null $ outfile o then "" else "set out '"++outfile o++"'"
