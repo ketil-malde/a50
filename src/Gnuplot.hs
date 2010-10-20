@@ -3,26 +3,37 @@ module Gnuplot where
 import System.Process
 import System.Exit
 import System.IO
-import Data.List (intersperse)
+import Data.List (intersperse, tails)
 
 import Control.Monad (when)
 import System.Directory (findExecutable)
+import Control.Concurrent (forkIO)
 
 gnuplot :: Num i => [String] -> [(String,[i])] -> [Int] -> IO ()
 gnuplot preamble cols hlines = do
   fe <- findExecutable "gnuplot"
   when (fe == Nothing) $ error "Couldn't find the 'gnuplot' executable - aborting"
-  -- putStrLn $ unlines $ map fst cols
   (i,o,e,p) <- runInteractiveCommand "gnuplot -persist"
+  forkIO (hGetContents o >>= hPutStr stdout)
+  -- ugly hack to limit error output
+  forkIO $ do 
+    let go (l1:l2:ls) = do putStrLn l1
+                           if ('^' `elem` l1) 
+                             then do 
+                               putStrLn l2
+                             else go (l2:ls)
+    go =<< fmap lines (hGetContents e)
+
+  
   hPutStr i $ unlines $ preamble
   hPutStrLn i (mkplots cols ++ concatMap ((',':) . show) hlines)
   mapM_ (\col -> do {hPutStr i . unlines . map show . snd $ col; hPutStrLn i "e"}) cols
+
   hClose i
+
   x <- waitForProcess p
-  hGetContents o >>= hPutStr stderr
-  hGetContents e >>= hPutStr stderr
   case x of ExitSuccess ->  return ()
-            ExitFailure j -> hPutStr stderr (errmsg++show j) >> return ()
+            ExitFailure j -> hPutStrLn stderr (errmsg++show j) >> return ()
     where errmsg = "'gnuplot' failed with exit code "
 
 -- | generate the plot command
