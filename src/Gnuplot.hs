@@ -3,7 +3,7 @@ module Gnuplot where
 import System.Process
 import System.Exit
 import System.IO
-import Data.List (intersperse, tails)
+import Data.List (intersperse)
 
 import Control.Monad (when)
 import System.Directory (findExecutable)
@@ -14,10 +14,10 @@ gnuplot preamble cols hlines = do
   fe <- findExecutable "gnuplot"
   when (fe == Nothing) $ error "Couldn't find the 'gnuplot' executable - aborting"
   (i,o,e,p) <- runInteractiveCommand "gnuplot -persist"
-  forkIO (hGetContents o >>= hPutStr stdout)
+  _ <- forkIO (hGetContents o >>= hPutStr stdout)
   -- ugly hack to limit error output
-  forkIO $ do 
-    let go (l1:l2:ls) = do putStrLn l1
+  _ <- forkIO $ do 
+    let go ~(l1:l2:ls) =do putStrLn l1
                            if ('^' `elem` l1) 
                              then do 
                                putStrLn l2

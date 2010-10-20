@@ -34,18 +34,19 @@ getArgs = do
   when (null $ inputs o) $ error "Please specify one or more input files!"
   return o
   
+setOutputFormat :: Opt -> Opt
 setOutputFormat o 
   | null (format o) && null (outfile o) = o
   | null (format o)                     = o { format = determineFormat $ outfile o }
   | null (outfile o)                    = error "Please specify an output file (-o) when you specify format."
   | otherwise       = o
-
-determineFormat fp =
-  let ext = reverse . takeWhile (/='.') . reverse
-  in case ext fp of 
-    "png" -> "png"
-    "jpg" -> "jpg"
-    "ps"  -> "postscript eps"
-    "svg" -> "svg"
-    "pdf" -> "pdf"
-    _ -> error "Couldn't determine format from output file name.\nPlease specify format with -f."
+    where 
+      determineFormat fp =
+        let ext = reverse . takeWhile (/='.') . reverse
+        in case ext fp of 
+          "png" -> "png"
+          "jpg" -> "jpg"
+          "ps"  -> "postscript eps"
+          "svg" -> "svg"
+          "pdf" -> "pdf"
+          _ -> error "Couldn't determine format from output file name.\nPlease specify format with -f."
