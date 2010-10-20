@@ -7,9 +7,6 @@ import Control.Monad (when)
 import System.Directory (getTemporaryDirectory)
 import Foreign (unsafePerformIO)
 
-version :: String
-version = "area50 v0 - graphical comparison of genome assemblies, ©2010 Ketil Malde."
-
 tmpdefault :: FilePath
 tmpdefault = unsafePerformIO getTemporaryDirectory
 
