@@ -33,10 +33,22 @@ myopt = Opt
 
 getArgs :: IO Opt
 getArgs = do
-  o <- cmdArgs myopt
+  o <- setOutputFormat `fmap` cmdArgs myopt
   when (null $ inputs o) $ error "Please specify one or more input files!"
-  when ((null $ outfile o) && (not $ null $ format o))
-        $ error "You must specify an ouput file when you specify a format"
-  when ((not $ null $ outfile o) && (null $ format o)) 
-        $ error "You must specify a format when you specify an ouput file"
   return o
+  
+setOutputFormat o 
+  | null (format o) && null (outfile o) = o
+  | null (format o)                     = o { format = determineFormat $ outfile o }
+  | null (outfile o)                    = error "Please specify an output file (-o) when you specify format."
+  | otherwise       = o
+
+determineFormat fp =
+  let ext = reverse . takeWhile (/='.') . reverse
+  in case ext fp of 
+    "png" -> "png"
+    "jpg" -> "jpg"
+    "ps"  -> "postscript eps"
+    "svg" -> "svg"
+    "pdf" -> "pdf"
+    _ -> error "Couldn't determine format from output file name.\nPlease specify format with -f."
