@@ -19,9 +19,9 @@ Description:    a50 - a simple tool for graphing genome coverage and fragmentati
 		and yet produces a more detailed and informative view than the usual metrics like largest
 		contig size or N50.
 		.
-                The Darcs repository is at <http://malde.org/~ketil/biohaskell/a50>, more information including some examples are at <http://blog.malde.org/index.php/a50-a-graphical-comparison-of-genome-assemblies/>.
+                The Darcs repository is at <http://malde.org/~ketil/biohaskell/a50>.
 
--- HomePage:	http://blog.malde.org/area50
+HomePage:	http://blog.malde.org/index.php/a50-a-graphical-comparison-of-genome-assemblies
 Build-Depends:  base>=3 && <5, bio > 0.4, process, containers, cmdargs >= 0.5, directory
 Build-Type:     Simple
 Cabal-Version:	>= 1.2.3
