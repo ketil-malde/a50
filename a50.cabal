@@ -34,3 +34,9 @@ Other-Modules:	Gnuplot, Options, Blat, Sort
 Hs-Source-Dirs: src
 Ghc-Options:    -Wall
 
+Executable:     n50
+Main-Is:        N50.hs
+Other-Modules:	Sort
+Hs-Source-Dirs: src
+Ghc-Options:    -Wall
+
