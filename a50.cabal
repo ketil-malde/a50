@@ -26,11 +26,11 @@ Build-Depends:  base>=3 && <5, bio > 0.4, process, containers, cmdargs >= 0.5, d
 Build-Type:     Simple
 Cabal-Version:	>= 1.2.3
 Tested-with:    GHC==6.12.1
-
 Data-files:     README
+
 Executable:     a50
 Main-Is:        A50.hs
-Other-Modules:	Gnuplot, Options, Blat
+Other-Modules:	Gnuplot, Options, Blat, Sort
 Hs-Source-Dirs: src
 Ghc-Options:    -Wall
 

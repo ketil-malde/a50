@@ -1,12 +1,10 @@
 module Main where
 
-import Bio.Sequence
-import Data.List (intersperse, foldl')
-
-import qualified Data.IntMap as M
+import Data.List (intersperse)
 
 import Gnuplot
 import Blat
+import Sort
 import Options
 
 main :: IO ()
@@ -45,16 +43,3 @@ mkplot o ns = gnuplot [conf,outp,labels,tics] (zip (inputs o) ns) es
         outp = if null $ outfile o then "" else "set out '"++outfile o++"'"
         es   = map read $ expect o
                   
-sizes :: FilePath -> IO [Int]
-sizes f = map (fromIntegral . seqlength) `fmap` readFasta f
-
-sort :: [Int] -> [Int]
-sort = concatMap (\(x,c) -> replicate c (fromIntegral $ negate x)) . M.toAscList . freqs
-
--- equivalent to  'M.fromList . map (\x->(fromIntegral $ negate x,1))', 
--- except for not blowing the stack
-freqs :: [Int] -> M.IntMap Int
-freqs = foldl' ins M.empty . map fromIntegral . map negate
-  where ins m x = case M.lookup x m of 
-          Just v -> v `seq` M.insert x (v+1) m
-          Nothing -> M.insert x 1 m
