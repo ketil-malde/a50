@@ -29,7 +29,7 @@ n50 [e] iss = do
       go [] (z1:z2:zs) = z1 `seq` go [] (z2:zs)
       go es [z1] = concatMap (const "-\t") es ++ show z1++" total size"
       go _ []  = error "shouldn't happen"
-  putStrLn ("Assembly \tn25\tn50\tn75\t\tn100="++show e)
+  putStrLn ("Assembly \tn25\tn50\tn75\t\testimated size="++show e)
   mapM_ genOut iss
 n50 _ _ = return ()
 
