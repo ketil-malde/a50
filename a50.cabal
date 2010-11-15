@@ -22,21 +22,15 @@ Description:    a50 - a simple tool for graphing genome coverage and fragmentati
                 The Darcs repository is at <http://malde.org/~ketil/biohaskell/a50>.
 
 HomePage:	http://blog.malde.org/index.php/a50-a-graphical-comparison-of-genome-assemblies
-Build-Depends:  base>=3 && <5, bio > 0.4, process, containers, cmdargs >= 0.5, directory
 Build-Type:     Simple
 Cabal-Version:	>= 1.2.3
 Tested-with:    GHC==6.12.1
 Data-files:     README
 
-Executable:     a50
-Main-Is:        A50.hs
-Other-Modules:	Gnuplot, Options, Blat, Sort
-Hs-Source-Dirs: src
-Ghc-Options:    -Wall
-
-Executable:     n50
-Main-Is:        N50.hs
-Other-Modules:	Sort
-Hs-Source-Dirs: src
-Ghc-Options:    -Wall
+Executable a50
+    Main-Is:        A50.hs
+    Other-Modules:  Gnuplot, Options, Blat, Sort
+    Hs-Source-Dirs: src
+    Ghc-Options:    -Wall
+    Build-Depends:  base>=3 && <5, bio > 0.4, process, containers, cmdargs >= 0.5, directory
 

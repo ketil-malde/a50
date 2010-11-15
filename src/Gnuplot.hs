@@ -25,7 +25,7 @@ gnuplot preamble cols hlines = do
     go =<< fmap lines (hGetContents e)
   
   hPutStr i $ unlines $ preamble
-  let show' (i,j) = show i ++ "\t" ++ show j
+  let show' (x,y) = show x ++ "\t" ++ show y
   hPutStrLn i (mkplots cols ++ concatMap ((',':) . show) hlines)
   mapM_ (\col -> do {hPutStr i . unlines . map show' . snd $ col; hPutStrLn i "e"}) cols
 
