@@ -9,7 +9,7 @@ import Control.Monad (when)
 import System.Directory (findExecutable)
 import Control.Concurrent (forkIO)
 
-gnuplot :: Num i => [String] -> [(String,[i])] -> [Int] -> IO ()
+gnuplot :: Num i => [String] -> [(String,[(Int,i)])] -> [Int] -> IO ()
 gnuplot preamble cols hlines = do
   fe <- findExecutable "gnuplot"
   when (fe == Nothing) $ error "Couldn't find the 'gnuplot' executable - aborting"
@@ -26,8 +26,9 @@ gnuplot preamble cols hlines = do
 
   
   hPutStr i $ unlines $ preamble
+  let show' (i,j) = show i ++ "\t" ++ show j
   hPutStrLn i (mkplots cols ++ concatMap ((',':) . show) hlines)
-  mapM_ (\col -> do {hPutStr i . unlines . map show . snd $ col; hPutStrLn i "e"}) cols
+  mapM_ (\col -> do {hPutStr i . unlines . map show' . snd $ col; hPutStrLn i "e"}) cols
 
   hClose i
 

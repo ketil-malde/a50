@@ -4,8 +4,8 @@ import Data.List (intersperse)
 
 import Gnuplot
 import Blat
-import Sort
-import Options
+import Sort    (sizes, sort, SizeTable)
+import Options (Opt(..), getArgs)
 
 main :: IO ()
 main = do 
@@ -19,9 +19,11 @@ main = do
       mkplot opts $ map (each 10) $ map (scanl1 (+)) $ zipWith interleave (map sort ss) ps
   -- putStr $ zipLists fs (map ((scanl1 (+)) . sort) ss)
 
-each :: Int -> [a] -> [a]
-each _ [] = []
-each n (x:xs) = x : each n (drop (n-1) xs)
+each :: Int -> [a] -> [(Int,a)]
+each k = go 0
+  where
+    go _ [] = []
+    go i (x:xs) = (i,x) : go (i+k) (drop (k-1) xs)
 
 zipLists :: [String] -> [[Int]] -> String
 zipLists fs ss = unlines ((concat $ map ("#\t"++) fs) : go (map (++repeat 0) ([1..]:ss)))
@@ -35,10 +37,10 @@ myshow :: Integral i => i -> String
 myshow 0 = ""
 myshow n = show n
 
-mkplot :: Opt -> [[Int]] -> IO ()
+mkplot :: Opt -> [[(Int,Int)]] -> IO ()
 mkplot o ns = gnuplot [conf,outp,labels,tics] (zip (inputs o) ns) es
   where labels = "set ylabel 'cumulative size'; set xlabel 'contig number'"
-        tics  = "set format y '%.0s%c'; set format x '%.0f0'"
+        tics  = "set format y '%.1s%c'; set format x '%.0f'"
         conf = if null $ format o then "" else "set terminal "++format o
         outp = if null $ outfile o then "" else "set out '"++outfile o++"'"
         es   = map read $ expect o
