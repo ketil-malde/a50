@@ -13,11 +13,25 @@ main = do
   ss <- mapM sizes $ inputs opts
   case estref opts of 
     "" -> do
+      n50 (map read $ expect opts) $ zip (inputs opts) ss
       mkplot opts $ map (each 10) $ map ((scanl1 (+)) . sort) ss
     est -> do  
       ps <- mapM (\asm -> fmap gen_result $ runBlat (tmpdir opts) asm est) (inputs opts)
       mkplot opts $ map (each 10) $ map (scanl1 (+)) $ zipWith interleave (map sort ss) ps
   -- putStr $ zipLists fs (map ((scanl1 (+)) . sort) ss)
+
+n50 :: [Int] -> [(FilePath,SizeTable)] -> IO ()
+n50 [e] iss = do
+  let genOut (f,st) = putStrLn (f ++ "\t"++go [e`div`4,e`div`2,3*e`div`4] (scanl1 (+) $ sort st))
+      go (e0:es) (z1:z2:zs) = 
+        if z2 > e0 then show (z2-z1)++"\t"++go es (z1:z2:zs)
+        else go (e0:es) (z2:zs)
+      go [] (z1:z2:zs) = z1 `seq` go [] (z2:zs)
+      go es [z1] = concatMap (const "-\t") es ++ show z1++" total size"
+      go _ []  = error "shouldn't happen"
+  putStrLn ("Assembly \tn25\tn50\tn75\t\tn100="++show e)
+  mapM_ genOut iss
+n50 _ _ = return ()
 
 each :: Int -> [a] -> [(Int,a)]
 each k = go 0
