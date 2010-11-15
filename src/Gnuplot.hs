@@ -17,13 +17,12 @@ gnuplot preamble cols hlines = do
   _ <- forkIO (hGetContents o >>= hPutStr stdout)
   -- ugly hack to limit error output
   _ <- forkIO $ do 
-    let go ~(l1:l2:ls) =do putStrLn l1
-                           if ('^' `elem` l1) 
-                             then do 
-                               putStrLn l2
-                             else go (l2:ls)
+    let go ~(l1:l2:ls) = do putStrLn l1
+                            if ('^' `elem` l1)
+                              then do
+                                putStrLn l2
+                              else go (l2:ls)
     go =<< fmap lines (hGetContents e)
-
   
   hPutStr i $ unlines $ preamble
   let show' (i,j) = show i ++ "\t" ++ show j
