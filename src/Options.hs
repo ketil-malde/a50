@@ -38,7 +38,8 @@ setOutputFormat :: Opt -> Opt
 setOutputFormat o 
   | null (format o) && null (outfile o) = o
   | null (format o)                     = o { format = determineFormat $ outfile o }
-  | null (outfile o)                    = error "Please specify an output file (-o) when you specify format."
+  | format o /= "plot" && null (outfile o) = error "Please specify an output file (-o) when you specify format."
+  | format o == "plot" && not (null $ outfile o) = error "'plot' format isn't supported with '-o',\nand only writes to standard output."
   | otherwise       = o
     where 
       determineFormat fp =

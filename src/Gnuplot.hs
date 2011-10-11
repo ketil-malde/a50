@@ -23,18 +23,23 @@ gnuplot preamble cols hlines = do
                                 putStrLn l2
                               else go (l2:ls)
     go =<< fmap lines (hGetContents e)
-  
-  hPutStr i $ unlines $ preamble
-  let show' (x,y) = show x ++ "\t" ++ show y
-  hPutStrLn i (mkplots cols ++ concatMap ((',':) . show) hlines)
-  mapM_ (\col -> do {hPutStr i . unlines . map show' . snd $ col; hPutStrLn i "e"}) cols
-
+  genplot i preamble cols hlines
   hClose i
-
   x <- waitForProcess p
   case x of ExitSuccess ->  return ()
             ExitFailure j -> hPutStrLn stderr (errmsg++show j) >> return ()
     where errmsg = "'gnuplot' failed with exit code "
+
+gnudat :: Num i => [String] -> [(String,[(Int,i)])] -> [Double] -> IO ()
+gnudat = genplot stdout
+
+-- | Write gnuplot instructions to a handle (todo: make pure)
+genplot :: Num i => Handle -> [String] -> [(String,[(Int,i)])] -> [Double] -> IO ()
+genplot i preamble cols hlines = do
+  hPutStr i $ unlines $ preamble
+  let show' (x,y) = show x ++ "\t" ++ show y
+  hPutStrLn i (mkplots cols ++ concatMap ((',':) . show) hlines)
+  mapM_ (\col -> do {hPutStr i . unlines . map show' . snd $ col; hPutStrLn i "e"}) cols
 
 -- | generate the plot command
 mkplots :: [(String,[a])] -> String

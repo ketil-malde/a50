@@ -6,6 +6,7 @@ import Gnuplot
 import Blat
 import Sort    (sizes, sort, SizeTable)
 import Options (Opt(..), getArgs)
+import Control.Monad (when)
 
 main :: IO ()
 main = do 
@@ -13,7 +14,7 @@ main = do
   ss <- mapM sizes $ inputs opts
   case estref opts of 
     "" -> do
-      n50 (map read $ expect opts) $ zip (inputs opts) ss
+      when (format opts /= "plot") $ n50 (map read $ expect opts) $ zip (inputs opts) ss
       mkplot opts $ map (each 10) $ map ((scanl1 (+)) . sort) ss
     est -> do  
       ps <- mapM (\asm -> fmap gen_result $ runBlat (tmpdir opts) asm est) (inputs opts)
@@ -52,10 +53,11 @@ myshow 0 = ""
 myshow n = show n
 
 mkplot :: Opt -> [[(Int,Int)]] -> IO ()
-mkplot o ns = gnuplot [conf,outp,labels,tics] (zip (inputs o) ns) es
+mkplot o ns = let my_out = if format o == "plot" then gnudat else gnuplot
+              in my_out [conf,outp,labels,tics] (zip (inputs o) ns) es
   where labels = "set ylabel 'cumulative size'; set xlabel 'contig number'"
         tics  = "set format y '%.1s%c'; set format x '%.0f'"
-        conf = if null $ format o then "" else "set terminal "++format o
+        conf = if (null $ format o) || format o == "plot" then "" else "set terminal "++format o
         outp = if null $ outfile o then "" else "set out '"++outfile o++"'"
         es   = map read $ expect o
                   
