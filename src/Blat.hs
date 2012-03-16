@@ -34,7 +34,7 @@ runBlat tmpdir asm ests = do
 gen_result :: [PSL] -> [(Int,Int)]
 gen_result = coverage . order . pslbest
 
-interleave :: Integral i => [i] -> [(i,i)] -> [i]
+interleave :: (Integral i, Show i) => [i] -> [(i,i)] -> [i]
 interleave sz [] = map (const 0) sz
 interleave (sz:szs) covs@((s1,c1):cs) 
   | sz > s1   = 0 : interleave szs covs
