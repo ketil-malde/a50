@@ -5,7 +5,7 @@ module Options where
 import System.Console.CmdArgs
 import Control.Monad (when)
 import System.Directory (getTemporaryDirectory)
-import Foreign (unsafePerformIO)
+import System.IO.Unsafe (unsafePerformIO)
 
 tmpdefault :: FilePath
 tmpdefault = unsafePerformIO getTemporaryDirectory

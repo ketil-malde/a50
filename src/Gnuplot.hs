@@ -9,7 +9,7 @@ import Control.Monad (when)
 import System.Directory (findExecutable)
 import Control.Concurrent (forkIO)
 
-gnuplot :: Num i => [String] -> [(String,[(Int,i)])] -> [Double] -> IO ()
+gnuplot :: (Show i, Num i) => [String] -> [(String,[(Int,i)])] -> [Double] -> IO ()
 gnuplot preamble cols hlines = do
   fe <- findExecutable "gnuplot"
   when (fe == Nothing) $ error "Couldn't find the 'gnuplot' executable - aborting"
@@ -30,11 +30,11 @@ gnuplot preamble cols hlines = do
             ExitFailure j -> hPutStrLn stderr (errmsg++show j) >> return ()
     where errmsg = "'gnuplot' failed with exit code "
 
-gnudat :: Num i => [String] -> [(String,[(Int,i)])] -> [Double] -> IO ()
+gnudat :: (Show i, Num i) => [String] -> [(String,[(Int,i)])] -> [Double] -> IO ()
 gnudat = genplot stdout
 
 -- | Write gnuplot instructions to a handle (todo: make pure)
-genplot :: Num i => Handle -> [String] -> [(String,[(Int,i)])] -> [Double] -> IO ()
+genplot :: (Show i, Num i) => Handle -> [String] -> [(String,[(Int,i)])] -> [Double] -> IO ()
 genplot i preamble cols hlines = do
   hPutStr i $ unlines $ preamble
   let show' (x,y) = show x ++ "\t" ++ show y
