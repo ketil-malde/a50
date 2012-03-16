@@ -48,7 +48,7 @@ zipLists fs ss = unlines ((concat $ map ("#\t"++) fs) : go (map (++repeat 0) ([1
                 in if all (==0) $ tail hs then []
                    else (concat $ intersperse "\t" $ map myshow hs) : go ts
 
-myshow :: Integral i => i -> String
+myshow :: (Integral i, Show i) => i -> String
 myshow 0 = ""
 myshow n = show n
 
