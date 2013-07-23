@@ -1,7 +1,7 @@
 module Sort where
 
 import qualified Data.IntMap as M
-import Bio.Sequence
+import Bio.Sequence.Fasta
 import Data.List (foldl')
 
 type SizeTable = M.IntMap Int

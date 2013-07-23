@@ -1,5 +1,5 @@
 Name:           a50
-Version:        0.4
+Version:        0.5
 License:        GPL
 
 Author:         Ketil Malde
@@ -32,5 +32,5 @@ Executable a50
     Other-Modules:  Gnuplot, Options, Blat, Sort
     Hs-Source-Dirs: src
     Ghc-Options:    -Wall
-    Build-Depends:  base>=3 && <5, bio > 0.4, process, containers, cmdargs >= 0.5, directory
+    Build-Depends:  base>=3 && <5, biopsl, biofasta, process, containers, cmdargs >= 0.5, directory
 
