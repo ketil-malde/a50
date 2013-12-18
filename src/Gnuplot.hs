@@ -15,13 +15,14 @@ gnuplot preamble cols hlines = do
   when (fe == Nothing) $ error "Couldn't find the 'gnuplot' executable - aborting"
   (i,o,e,p) <- runInteractiveCommand "gnuplot -persist"
   _ <- forkIO (hGetContents o >>= hPutStr stdout)
-  -- ugly hack to limit error output
+  -- ugly hack to limit error output (stop after first error)
   _ <- forkIO $ do 
-    let go ~(l1:l2:ls) = do putStrLn l1
-                            if ('^' `elem` l1)
-                              then do
-                                putStrLn l2
-                              else go (l2:ls)
+    let go [] = return ()
+        go (l1:rest) = do putStrLn l1
+                          if ('^' `elem` l1) 
+                            then case rest of (l2:_) -> putStrLn l2 
+                                              _ -> return ()
+                            else go rest
     go =<< fmap lines (hGetContents e)
   genplot i preamble cols hlines
   hClose i
