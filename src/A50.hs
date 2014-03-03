@@ -14,16 +14,16 @@ main = do
   ss <- mapM sizes $ inputs opts
   case estref opts of 
     "" -> do
-      when (format opts /= "plot") $ n50 (map read $ expect opts) $ zip (inputs opts) ss
+      when (format opts /= "plot") $ n50 (expect opts) $ zip (inputs opts) ss
       mkplot opts $ map (each 10) $ map ((scanl1 (+)) . sort) ss
     est -> do  
       ps <- mapM (\asm -> fmap gen_result $ runBlat (tmpdir opts) asm est) (inputs opts)
       mkplot opts $ map (each 10) $ map (scanl1 (+)) $ zipWith interleave (map sort ss) ps
   -- putStr $ zipLists fs (map ((scanl1 (+)) . sort) ss)
 
-n50 :: [Int] -> [(FilePath,SizeTable)] -> IO ()
-n50 [e] iss = do
-  let genOut (f,st) = putStrLn (f ++ "\t"++go [e`div`4,e`div`2,3*e`div`4] (scanl1 (+) $ sort st))
+n50 :: Maybe Double -> [(FilePath,SizeTable)] -> IO ()
+n50 (Just e) iss = do
+  let genOut (f,st) = putStrLn (f ++ "\t"++go (map round [e/4,e/2,3*e/4]) (scanl1 (+) $ sort st))
       go (e0:es) (z1:z2:zs) = 
         if z2 > e0 then show (z2-z1)++"\t"++go es (z1:z2:zs)
         else go (e0:es) (z2:zs)
@@ -32,7 +32,7 @@ n50 [e] iss = do
       go _ []  = error "shouldn't happen"
   putStrLn ("Assembly \tn25\tn50\tn75\t\testimated size="++show e)
   mapM_ genOut iss
-n50 _ _ = return ()
+n50 Nothing _ = return ()
 
 each :: Int -> [a] -> [(Int,a)]
 each k = go 0
@@ -54,10 +54,9 @@ myshow n = show n
 
 mkplot :: Opt -> [[(Int,Int)]] -> IO ()
 mkplot o ns = let my_out = if format o == "plot" then gnudat else gnuplot
-              in my_out [conf,outp,labels,tics] (zip (inputs o) ns) es
+              in my_out [conf,outp,labels,tics] (zip (inputs o) ns) (expect o)
   where labels = "set ylabel 'cumulative size'; set xlabel 'contig number'"
         tics  = "set format y '%.1s%c'; set format x '%.0f'"
         conf = if (null $ format o) || format o == "plot" then "" else "set terminal "++format o
         outp = if null $ outfile o then "" else "set out '"++outfile o++"'"
-        es   = map read $ expect o
                   

@@ -12,7 +12,7 @@ tmpdefault = unsafePerformIO getTemporaryDirectory
 
 data Opt = Opt { outfile  :: FilePath
                , format :: String
-               , expect   :: [String]
+               , expect   :: Maybe Double
                , inputs   :: [FilePath]
                , estref   :: FilePath
                , tmpdir   :: FilePath
@@ -22,7 +22,7 @@ myopt :: Opt
 myopt = Opt 
   { outfile = def &= help "Output file, if applicable" &= typFile
   , format  = def &= help "Gnuplot output format (a.k.a. 'terminal')"
-  , expect  = []  &= help "Expected genome size"
+  , expect  = Nothing  &= help "Expected genome size"
   , inputs  = def &= args &= typFile
   , estref  = def &= help "Reference transcripts" &= typFile &= name "E"
   , tmpdir  = tmpdefault &= help "Set temporary directory" &= typDir &= name "T"

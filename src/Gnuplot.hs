@@ -4,12 +4,13 @@ import System.Process
 import System.Exit
 import System.IO
 import Data.List (intersperse)
+import Data.Maybe (maybeToList)
 
 import Control.Monad (when)
 import System.Directory (findExecutable)
 import Control.Concurrent (forkIO)
 
-gnuplot :: (Show i, Num i) => [String] -> [(String,[(Int,i)])] -> [Double] -> IO ()
+gnuplot :: (Show i, Num i) => [String] -> [(String,[(Int,i)])] -> Maybe Double -> IO ()
 gnuplot preamble cols hlines = do
   fe <- findExecutable "gnuplot"
   when (fe == Nothing) $ error "Couldn't find the 'gnuplot' executable - aborting"
@@ -31,15 +32,15 @@ gnuplot preamble cols hlines = do
             ExitFailure j -> hPutStrLn stderr (errmsg++show j) >> return ()
     where errmsg = "'gnuplot' failed with exit code "
 
-gnudat :: (Show i, Num i) => [String] -> [(String,[(Int,i)])] -> [Double] -> IO ()
+gnudat :: (Show i, Num i) => [String] -> [(String,[(Int,i)])] -> Maybe Double -> IO ()
 gnudat = genplot stdout
 
 -- | Write gnuplot instructions to a handle (todo: make pure)
-genplot :: (Show i, Num i) => Handle -> [String] -> [(String,[(Int,i)])] -> [Double] -> IO ()
+genplot :: (Show i, Num i) => Handle -> [String] -> [(String,[(Int,i)])] -> Maybe Double -> IO ()
 genplot i preamble cols hlines = do
   hPutStr i $ unlines $ preamble
   let show' (x,y) = show x ++ "\t" ++ show y
-  hPutStrLn i (mkplots cols ++ concatMap ((',':) . show) hlines)
+  hPutStrLn i (mkplots cols ++ concatMap ((',':) . show) (maybeToList hlines))
   mapM_ (\col -> do {hPutStr i . unlines . map show' . snd $ col; hPutStrLn i "e"}) cols
 
 -- | generate the plot command
